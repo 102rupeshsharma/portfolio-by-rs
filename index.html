@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rupesh Sharma — Full Stack Developer</title>
+  <meta name="description" content="Portfolio of Rupesh Sharma — Full Stack Developer (React, Node.js, FastAPI, MongoDB). A Legend of Zelda inspired adventure." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Press+Start+2P&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════ TITLE SCREEN ══════════════ -->
+  <div id="title-screen">
+    <div class="title-inner">
+      <svg class="triforce-big" viewBox="0 0 200 176" aria-hidden="true">
+        <polygon class="tri tri-top"   points="100,0 150,88 50,88" />
+        <polygon class="tri tri-left"  points="50,88 100,176 0,176" />
+        <polygon class="tri tri-right" points="150,88 200,176 100,176" />
+      </svg>
+      <p class="title-legend">THE LEGEND OF</p>
+      <h1 class="title-name">RUPESH</h1>
+      <p class="title-sub">A Full Stack Adventure</p>
+      <button id="press-start" class="press-start">▶ PRESS START</button>
+      <p class="title-hint">click anywhere or press any key</p>
+    </div>
+  </div>
+
+  <!-- Magic meter (scroll progress) -->
+  <div id="magic-meter"><div id="magic-fill"></div></div>
+
+  <!-- Sparkle cursor trail container -->
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- ══════════════ NAV ══════════════ -->
+  <nav id="nav">
+    <a class="nav-logo" href="#hero">
+      <svg viewBox="0 0 200 176" class="triforce-mini" aria-hidden="true">
+        <polygon points="100,0 150,88 50,88" />
+        <polygon points="50,88 100,176 0,176" />
+        <polygon points="150,88 200,176 100,176" />
+      </svg>
+      <span>Rupesh</span>
+    </a>
+    <button id="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="#about"    data-nav>The Tale</a></li>
+      <li><a href="#skills"   data-nav>Inventory</a></li>
+      <li><a href="#quests"   data-nav>Quests</a></li>
+      <li><a href="#journey"  data-nav>Journey</a></li>
+      <li><a href="#contact"  data-nav class="nav-cta">Summon Me</a></li>
+    </ul>
+    <div class="nav-hearts" aria-hidden="true">
+      <span class="heart">❤</span><span class="heart">❤</span><span class="heart">❤</span>
+    </div>
+  </nav>
+
+  <!-- ══════════════ HERO ══════════════ -->
+  <header id="hero">
+    <canvas id="fireflies" aria-hidden="true"></canvas>
+
+    <div class="mountains" aria-hidden="true">
+      <div class="mtn mtn-far"></div>
+      <div class="mtn mtn-mid"></div>
+      <div class="mtn mtn-near"></div>
+      <div class="grass-line"></div>
+    </div>
+
+    <div class="hero-content">
+      <svg class="triforce-float" viewBox="0 0 200 176" aria-hidden="true">
+        <polygon points="100,0 150,88 50,88" />
+        <polygon points="50,88 100,176 0,176" />
+        <polygon points="150,88 200,176 100,176" />
+      </svg>
+      <p class="hero-pre">⚔ A NEW ADVENTURER APPEARS ⚔</p>
+      <h1 class="hero-name">RUPESH<span class="gold-dot"> </span>SHARMA</h1>
+      <p class="hero-role"><span id="typewriter"></span><span class="caret">|</span></p>
+      <p class="hero-tag">Forging production-grade web apps with React, Node.js &amp; FastAPI —<br/>one quest at a time.</p>
+      <div class="hero-btns">
+        <a href="#quests" class="btn btn-gold">⚔ Begin Quest</a>
+        <a href="#contact" class="btn btn-ghost">🛡 Summon Me</a>
+      </div>
+    </div>
+
+    <a href="#about" class="scroll-cue" aria-label="Scroll down">
+      <span class="scroll-rupee"></span>
+      <span class="scroll-txt">descend</span>
+    </a>
+  </header>
+
+  <main>
+  <!-- ══════════════ ABOUT ══════════════ -->
+  <section id="about" class="section">
+    <div class="section-head reveal">
+      <span class="rune">✦ Chapter I ✦</span>
+      <h2>The Hero's Tale</h2>
+      <div class="sword-divider" aria-hidden="true"><span></span><span class="hilt">⬥</span><span></span></div>
+    </div>
+
+    <div class="about-grid">
+      <div class="parchment reveal">
+        <p>In the land of <strong>Kalaburagi</strong>, a developer took up the keyboard instead of the sword.
+        Now a <strong>Full Stack Developer</strong> with <strong>1 year</strong> of battle-tested experience,
+        I build production-grade web applications with <strong>React, Node.js, FastAPI</strong> and
+        <strong>MySQL / MongoDB</strong>.</p>
+        <p>My completed quests include <strong>ERP systems</strong>, <strong>admin dashboards</strong>, and
+        scalable <strong>REST APIs</strong> guarded by JWT-based authentication — plus independent
+        AI-powered side quests like speech-to-text pipelines and automated meeting analysis.</p>
+        <p>My creed: <em>clean architecture, performance optimization, and end-to-end ownership</em> —
+        from the first pixel to the last query.</p>
+      </div>
+
+      <aside class="stat-card reveal reveal-delay">
+        <h3 class="stat-title">◈ Character Stats ◈</h3>
+        <ul class="stat-list">
+          <li><span>Class</span><strong>Full Stack Developer</strong></li>
+          <li><span>Guild</span><strong>KcGlobEd Pvt. Ltd.</strong></li>
+          <li><span>Region</span><strong>Gurgaon, India</strong></li>
+          <li><span>Spec</span><strong>React · Node · FastAPI</strong></li>
+        </ul>
+        <div class="counters">
+          <div class="counter"><span class="count" data-count="12">0</span><em>Months of XP</em></div>
+          <div class="counter"><span class="count" data-count="7">0</span><em>Quests Shipped</em></div>
+          <div class="counter"><span class="count" data-count="15">0</span><em>Items Mastered</em></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ══════════════ SKILLS / INVENTORY ══════════════ -->
+  <section id="skills" class="section section-alt">
+    <div class="section-head reveal">
+      <span class="rune">✦ Chapter II ✦</span>
+      <h2>Inventory</h2>
+      <div class="sword-divider" aria-hidden="true"><span></span><span class="hilt">⬥</span><span></span></div>
+      <p class="section-sub">Every item earned through real quests — hover to inspect.</p>
+    </div>
+
+    <div class="inventory reveal">
+      <div class="inv-group">
+        <h3 class="inv-label">⚔ Languages</h3>
+        <div class="inv-grid">
+          <button class="slot" data-desc="My trusty blade — the language of the web."><i>🗡️</i><b>JavaScript</b></button>
+          <button class="slot" data-desc="Shield of type safety across large codebases."><i>🛡️</i><b>TypeScript</b></button>
+          <button class="slot" data-desc="The wise serpent — scripting &amp; backend magic."><i>🐍</i><b>Python</b></button>
+        </div>
+      </div>
+
+      <div class="inv-group">
+        <h3 class="inv-label">🏹 Frontend</h3>
+        <div class="inv-grid">
+          <button class="slot" data-desc="Master Sword of UIs — component-driven power."><i>⚛️</i><b>React.js</b></button>
+          <button class="slot" data-desc="Hookshot to SSR, routing &amp; performance."><i>▲</i><b>Next.js</b></button>
+          <button class="slot" data-desc="One state to rule the whole kingdom."><i>🌀</i><b>Redux</b></button>
+          <button class="slot" data-desc="Utility-first armor — style at speed."><i>🌬️</i><b>Tailwind</b></button>
+          <button class="slot" data-desc="Enchanted component library."><i>💠</i><b>Material UI</b></button>
+          <button class="slot" data-desc="Foundation stones of every realm."><i>🏰</i><b>HTML5 / CSS3</b></button>
+        </div>
+      </div>
+
+      <div class="inv-group">
+        <h3 class="inv-label">🔮 Backend</h3>
+        <div class="inv-grid">
+          <button class="slot" data-desc="Runtime of the server realm."><i>🌿</i><b>Node.js</b></button>
+          <button class="slot" data-desc="Swift as a fairy — Python APIs at speed."><i>⚡</i><b>FastAPI</b></button>
+          <button class="slot" data-desc="Bridges between kingdoms — REST APIs."><i>🌉</i><b>REST APIs</b></button>
+          <button class="slot" data-desc="Seal of authentication — token rotation included."><i>🗝️</i><b>JWT Auth</b></button>
+        </div>
+      </div>
+
+      <div class="inv-group">
+        <h3 class="inv-label">📜 Databases &amp; Tools</h3>
+        <div class="inv-grid">
+          <button class="slot" data-desc="Chest of documents — flexible schemas."><i>🍃</i><b>MongoDB</b></button>
+          <button class="slot" data-desc="Ancient tablets of relational order."><i>🐬</i><b>MySQL / SQL</b></button>
+          <button class="slot" data-desc="Time travel for code."><i>🌳</i><b>Git / GitHub</b></button>
+          <button class="slot" data-desc="Warp portal to production."><i>🚀</i><b>Vercel</b></button>
+          <button class="slot" data-desc="Scrying orb for APIs."><i>📮</i><b>Postman</b></button>
+        </div>
+      </div>
+    </div>
+
+    <p id="item-desc" class="item-desc" aria-live="polite">— inspect an item —</p>
+  </section>
+
+  <!-- ══════════════ PROJECTS / QUESTS ══════════════ -->
+  <section id="quests" class="section">
+    <div class="section-head reveal">
+      <span class="rune">✦ Chapter III ✦</span>
+      <h2>Legendary Quests</h2>
+      <div class="sword-divider" aria-hidden="true"><span></span><span class="hilt">⬥</span><span></span></div>
+      <p class="section-sub">Treasures forged solo — open a chest to see the loot.</p>
+    </div>
+
+    <div class="quest-grid">
+      <article class="quest-card reveal tilt">
+        <div class="chest" aria-hidden="true">🎙️</div>
+        <div class="quest-meta">
+          <span class="difficulty" title="Quest difficulty">♥♥♥♥♡</span>
+          <span class="quest-type">MAIN QUEST</span>
+        </div>
+        <h3>MeetingMind</h3>
+        <p class="quest-sub">AI-Powered Meeting Analysis</p>
+        <p>Full stack app that swallows large audio uploads and returns transcripts, summaries and
+        emotion insights. OpenAI <strong>Whisper</strong> for speech-to-text, transformer models for
+        summarization — a full end-to-end pipeline, no database needed.</p>
+        <ul class="tags"><li>React</li><li>Node.js</li><li>Whisper</li><li>Transformers</li></ul>
+        <a class="quest-link" href="https://github.com/102rupeshsharma" target="_blank" rel="noopener">Open Chest ➜</a>
+      </article>
+
+      <article class="quest-card reveal reveal-delay tilt">
+        <div class="chest" aria-hidden="true">💰</div>
+        <div class="quest-meta">
+          <span class="difficulty" title="Quest difficulty">♥♥♥♥♡</span>
+          <span class="quest-type">MAIN QUEST</span>
+        </div>
+        <h3>SettleUp</h3>
+        <p class="quest-sub">Group Expense Splitter · RBAC</p>
+        <p>Splitting rupees fairly across the party. JWT auth with <strong>access/refresh token
+        rotation</strong>, backend-enforced roles (Admin · Member · Viewer), and a flexible engine for
+        equal, exact and percentage splits with accurate net-balance math.</p>
+        <ul class="tags"><li>React</li><li>Express</li><li>MongoDB</li><li>JWT</li></ul>
+        <a class="quest-link" href="https://github.com/102rupeshsharma" target="_blank" rel="noopener">Open Chest ➜</a>
+      </article>
+    </div>
+
+    <h3 class="guild-title reveal">⚑ Guild Quests <small>— shipped at KcGlobEd</small></h3>
+    <div class="guild-grid">
+      <article class="guild-card reveal"><i>🏯</i><h4>ERP System</h4><p>Enterprise resource planning platform.</p><ul class="tags"><li>React</li><li>FastAPI</li></ul></article>
+      <article class="guild-card reveal"><i>📚</i><h4>InstaLearn</h4><p>Udemy-like learning platform.</p><ul class="tags"><li>React</li><li>Node.js</li><li>MongoDB</li></ul></article>
+      <article class="guild-card reveal"><i>🏫</i><h4>GCC School Website</h4><p>Public school site, fast &amp; SEO-ready.</p><ul class="tags"><li>Next.js</li></ul></article>
+      <article class="guild-card reveal"><i>🗺️</i><h4>GCC Admin Panel</h4><p>Dashboard &amp; business workflows.</p><ul class="tags"><li>React</li><li>Node.js</li></ul></article>
+    </div>
+
+    <!-- Legendary chest → resume download -->
+    <div class="chest-zone reveal">
+      <p class="chest-callout">✦ A LEGENDARY CHEST APPEARS! ✦</p>
+      <button id="resume-chest" class="loot-chest" aria-label="Open the chest to download my resume">
+        <span class="chest-beam" aria-hidden="true"></span>
+        <span class="chest-loot" aria-hidden="true">📜</span>
+        <span class="chest-lid" aria-hidden="true">
+          <span class="lid-band"></span>
+          <span class="chest-lock"></span>
+        </span>
+        <span class="chest-base" aria-hidden="true">
+          <span class="base-band"></span>
+        </span>
+        <span class="chest-shadow" aria-hidden="true"></span>
+      </button>
+      <p class="chest-hint">click to open — inside lies the sacred résumé</p>
+      <p id="chest-fanfare" class="chest-fanfare" aria-live="polite">🎺 YOU GOT THE RÉSUMÉ! 🎺<br/><small>+1 Full Stack Developer added to your party</small></p>
+    </div>
+  </section>
+
+  <!-- ══════════════ EXPERIENCE + EDUCATION / JOURNEY ══════════════ -->
+  <section id="journey" class="section section-alt">
+    <div class="section-head reveal">
+      <span class="rune">✦ Chapter IV ✦</span>
+      <h2>The Journey So Far</h2>
+      <div class="sword-divider" aria-hidden="true"><span></span><span class="hilt">⬥</span><span></span></div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-node" aria-hidden="true">⚔</div>
+        <div class="tl-card">
+          <span class="tl-date">Jul 2025 — Present</span>
+          <h3>Full Stack Developer <em>· KcGlobEd Pvt. Ltd., Gurgaon</em></h3>
+          <ul class="tl-list">
+            <li>Built &amp; maintain production apps: ERP System, GCC School Website, Admin Panel &amp; InstaLearn.</li>
+            <li>Crafted reusable UI components and business workflows with React, Next.js, Node.js &amp; MongoDB.</li>
+            <li>Integrated secure RESTful APIs bridging frontend and backend services.</li>
+            <li>Hunted performance bottlenecks and slew production bugs across the stack.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-node" aria-hidden="true">🎓</div>
+        <div class="tl-card">
+          <span class="tl-date">2021 — 2025</span>
+          <h3>B.E. Computer Science <em>· K.C.T Engineering College, Kalaburagi</em></h3>
+          <ul class="tl-list">
+            <li>CGPA <strong>7.97 / 10</strong> — Operating Systems, Networking, Databases.</li>
+            <li>🏆 <strong>2nd place</strong>, College Hackathon — Campus Event Manager application.</li>
+            <li>Mentored first-year adventurers in web development &amp; programming fundamentals.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-node" aria-hidden="true">🌱</div>
+        <div class="tl-card">
+          <span class="tl-date">2019 — 2021</span>
+          <h3>12th Grade <em>· SS Tegnoor College, Kalaburagi</em></h3>
+          <ul class="tl-list"><li>Scored <strong>84%</strong> — where the adventure began.</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ CONTACT ══════════════ -->
+  <section id="contact" class="section">
+    <div class="section-head reveal">
+      <span class="rune">✦ Final Chapter ✦</span>
+      <h2>Summon the Developer</h2>
+      <div class="sword-divider" aria-hidden="true"><span></span><span class="hilt">⬥</span><span></span></div>
+    </div>
+
+    <div class="oldman reveal">
+      <p class="oldman-quote">“IT'S DANGEROUS TO SHIP ALONE.<br/>TAKE ME.”</p>
+      <div class="oldman-fire" aria-hidden="true">🔥 &nbsp; 🧙 &nbsp; 🔥</div>
+    </div>
+
+    <div class="contact-grid reveal">
+      <a class="contact-card" href="mailto:102rupeshsharma@gmail.com">
+        <i>📜</i><b>Send a Scroll</b><span>102rupeshsharma@gmail.com</span>
+      </a>
+      <a class="contact-card" href="tel:+917483124898">
+        <i>🪈</i><b>Play the Ocarina</b><span>+91 74831 24898</span>
+      </a>
+      <a class="contact-card" href="https://linkedin.com/in/102rupeshsharma" target="_blank" rel="noopener">
+        <i>🛡️</i><b>LinkedIn</b><span>/in/102rupeshsharma</span>
+      </a>
+      <a class="contact-card" href="https://github.com/102rupeshsharma" target="_blank" rel="noopener">
+        <i>⚒️</i><b>GitHub</b><span>/102rupeshsharma</span>
+      </a>
+    </div>
+  </section>
+  </main>
+
+  <footer>
+    <svg viewBox="0 0 200 176" class="triforce-mini" aria-hidden="true">
+      <polygon points="100,0 150,88 50,88" />
+      <polygon points="50,88 100,176 0,176" />
+      <polygon points="150,88 200,176 100,176" />
+    </svg>
+    <p>Crafted with ❤ and ⚔ by Rupesh Sharma · © 2026</p>
+    <p class="footer-hint">psst… try the Konami code: ↑ ↑ ↓ ↓ ← → ← → B A</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
