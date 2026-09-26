@@ -196,8 +196,21 @@ const chestBtn = document.getElementById('resume-chest');
 const fanfare = document.getElementById('chest-fanfare');
 let chestBusy = false;
 
+const giveLoot = () => {
+  const a = document.createElement('a');
+  a.href = 'resume.pdf';
+  a.download = 'resume.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
+
 chestBtn.addEventListener('click', () => {
-  if (chestBusy) return;
+  // already open: just hand over the resume again
+  if (chestBtn.classList.contains('open')) {
+    if (!chestBusy) giveLoot();
+    return;
+  }
   chestBusy = true;
   chestBtn.classList.add('open');
 
@@ -207,31 +220,20 @@ chestBtn.addEventListener('click', () => {
     setTimeout(() => {
       const s = document.createElement('span');
       s.className = 'spark';
-      s.style.left = r.left + r.width / 2 + (Math.random() * 120 - 60) + 'px';
-      s.style.top = r.top + r.height * 0.4 + (Math.random() * 60 - 50) + 'px';
+      s.style.left = r.left + r.width / 2 + (Math.random() * 140 - 70) + 'px';
+      s.style.top = r.top + r.height * 0.35 + (Math.random() * 60 - 50) + 'px';
       sparkles.appendChild(s);
       setTimeout(() => s.remove(), 700);
-    }, 200 + i * 45);
+    }, 350 + i * 50);
   }
 
-  setTimeout(() => fanfare.classList.add('show'), 600);
+  setTimeout(() => fanfare.classList.add('show'), 800);
 
-  // hand over the loot
+  // hand over the loot; the chest stays open from here on
   setTimeout(() => {
-    const a = document.createElement('a');
-    a.href = 'Rupesh_Sharma_Resume.pdf';
-    a.download = 'Rupesh_Sharma_Resume.pdf';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }, 1000);
-
-  // close the chest so it can be opened again
-  setTimeout(() => {
-    chestBtn.classList.remove('open');
-    fanfare.classList.remove('show');
+    giveLoot();
     chestBusy = false;
-  }, 6000);
+  }, 1300);
 });
 
 /* ── Konami code → rupee rain ─────────────────── */
@@ -256,3 +258,174 @@ function rupeeRain() {
     setTimeout(() => r.remove(), 5200);
   }
 }
+
+/* ── Tiny chiptune blips (WebAudio, no files) ─── */
+let audioCtx = null;
+
+function playNotes(seq, type = 'triangle', vol = 0.1) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = audioCtx.currentTime;
+    for (const [freq, start, dur] of seq) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, t0 + start);
+      gain.gain.linearRampToValueAtTime(vol, t0 + start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + start + dur);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(t0 + start);
+      osc.stop(t0 + start + dur + 0.05);
+    }
+  } catch (e) { /* audio blocked — stay silent */ }
+}
+
+const blipCollect = () => playNotes([[880, 0, 0.09], [1320, 0.07, 0.14]], 'square', 0.06);
+const chimeFanfare = () => playNotes([[523, 0, 0.12], [659, 0.11, 0.12], [784, 0.22, 0.12], [1047, 0.33, 0.45]]);
+const thudHurt = () => playNotes([[220, 0, 0.12], [165, 0.1, 0.18]], 'sawtooth', 0.05);
+
+/* ── Toast messages ───────────────────────────── */
+const toast = document.getElementById('toast');
+let toastTimer;
+
+function showToast(msg, dur = 3800) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), dur);
+}
+
+/* ── Hidden collectible rupees + wallet ───────── */
+const walletEl = document.getElementById('rupee-count');
+const RUPEE_COLORS = { 1: '#46e08a', 5: '#56b4ff', 20: '#ff6b5e' };
+const rupeeSpots = [['about', 1], ['skills', 5], ['quests', 20], ['journey', 5], ['contact', 1]];
+let wallet = 0;
+let remaining = rupeeSpots.length;
+
+rupeeSpots.forEach(([id, val]) => {
+  const sec = document.getElementById(id);
+  if (!sec) return;
+  const b = document.createElement('button');
+  b.className = 'collect-rupee';
+  b.setAttribute('aria-label', 'Collect a hidden rupee');
+  b.style.left = 6 + Math.random() * 86 + '%';
+  b.style.top = 10 + Math.random() * 62 + '%';
+  b.style.background = RUPEE_COLORS[val];
+  b.style.filter = `drop-shadow(0 0 9px ${RUPEE_COLORS[val]})`;
+  sec.appendChild(b);
+
+  b.addEventListener('click', () => {
+    if (b.classList.contains('pop')) return;
+    b.classList.add('pop');
+    blipCollect();
+    wallet += val;
+    walletEl.textContent = wallet;
+    walletEl.classList.remove('bump');
+    void walletEl.offsetWidth;
+    walletEl.classList.add('bump');
+    setTimeout(() => b.remove(), 500);
+    if (--remaining === 0) {
+      setTimeout(() => {
+        showToast('💎 WALLET FULL — A TRUE HERO! 💎');
+        chimeFanfare();
+        rupeeRain();
+      }, 400);
+    }
+  });
+});
+
+/* ── Sword slash on click ─────────────────────── */
+window.addEventListener('pointerdown', e => {
+  if (reducedMotion || e.pointerType !== 'mouse') return;
+  const s = document.createElement('span');
+  s.className = 'slash';
+  s.style.left = e.clientX + 'px';
+  s.style.top = e.clientY + 'px';
+  s.style.setProperty('--ang', (Math.random() * 90 - 45) + 'deg');
+  sparkles.appendChild(s);
+  setTimeout(() => s.remove(), 420);
+});
+
+/* ── Hero parallax on mouse move ──────────────── */
+if (!reducedMotion && matchMedia('(hover: hover)').matches) {
+  const heroEl = document.getElementById('hero');
+  const far = document.querySelector('.mtn-far');
+  const mid = document.querySelector('.mtn-mid');
+  const near = document.querySelector('.mtn-near');
+  let px = 0, py = 0, ticking = false;
+
+  heroEl.addEventListener('mousemove', e => {
+    px = e.clientX / innerWidth - 0.5;
+    py = e.clientY / innerHeight - 0.5;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      far.style.transform = `translate(${px * -8}px, ${py * -3}px)`;
+      mid.style.transform = `translate(${px * -16}px, ${py * -6}px)`;
+      near.style.transform = `translate(${px * -28}px, ${py * -10}px)`;
+      ticking = false;
+    });
+  });
+}
+
+/* ── Magnetic hero buttons ────────────────────── */
+if (!reducedMotion && matchMedia('(hover: hover)').matches) {
+  document.querySelectorAll('.hero-btns .btn').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const dx = (e.clientX - r.left - r.width / 2) * 0.22;
+      const dy = (e.clientY - r.top - r.height / 2) * 0.3;
+      btn.style.transform = `translate(${dx}px, ${dy - 3}px)`;
+    });
+    btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+  });
+}
+
+/* ── Nav hearts: take damage, then full heal ──── */
+const heartEls = [...document.querySelectorAll('.nav-hearts .heart')];
+heartEls.forEach(h => {
+  h.style.cursor = 'pointer';
+  h.addEventListener('click', () => {
+    if (h.classList.contains('empty')) return;
+    h.classList.add('empty');
+    thudHurt();
+    if (heartEls.every(x => x.classList.contains('empty'))) {
+      showToast('💀 GAME OVER? …just kidding. Fully healed! ❤');
+      setTimeout(() => {
+        heartEls.forEach((x, i) => setTimeout(() => x.classList.remove('empty'), i * 180));
+        chimeFanfare();
+      }, 1300);
+    }
+  });
+});
+
+/* ── Hero triforce: spin, click 3× for a surprise ── */
+const heroTri = document.querySelector('.triforce-float');
+let triClicks = 0, triTimer;
+heroTri.style.cursor = 'pointer';
+heroTri.addEventListener('click', () => {
+  heroTri.classList.remove('spin');
+  requestAnimationFrame(() => requestAnimationFrame(() => heroTri.classList.add('spin')));
+  triClicks++;
+  playNotes([[660 + triClicks * 120, 0, 0.15]], 'triangle', 0.07);
+  clearTimeout(triTimer);
+  triTimer = setTimeout(() => { triClicks = 0; }, 1600);
+  if (triClicks >= 3) {
+    triClicks = 0;
+    chimeFanfare();
+    rupeeRain();
+    showToast('✨ THE TRIFORCE ANSWERS YOUR CALL ✨');
+  }
+});
+
+/* ── Chest gets its own fanfare chime ─────────── */
+let chestChimed = false;
+chestBtn.addEventListener('click', () => {
+  if (!chestChimed && chestBtn.classList.contains('open')) {
+    chestChimed = true;
+    setTimeout(chimeFanfare, 650);
+  } else {
+    blipCollect();
+  }
+});

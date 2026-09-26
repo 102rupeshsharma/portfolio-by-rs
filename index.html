@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rupesh Sharma — Full Stack Developer</title>
+  <title>Rupesh Sharma</title>
   <meta name="description" content="Portfolio of Rupesh Sharma — Full Stack Developer (React, Node.js, FastAPI, MongoDB). A Legend of Zelda inspired adventure." />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="64x64" href="images/favicon-64.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Press+Start+2P&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
@@ -52,6 +55,10 @@
       <li><a href="#journey"  data-nav>Journey</a></li>
       <li><a href="#contact"  data-nav class="nav-cta">Summon Me</a></li>
     </ul>
+    <div class="rupee-wallet" title="Rupees collected — find them hidden around the page!">
+      <span class="wallet-gem" aria-hidden="true"></span>
+      <span id="rupee-count">0</span>
+    </div>
     <div class="nav-hearts" aria-hidden="true">
       <span class="heart">❤</span><span class="heart">❤</span><span class="heart">❤</span>
     </div>
@@ -240,13 +247,10 @@
       <button id="resume-chest" class="loot-chest" aria-label="Open the chest to download my resume">
         <span class="chest-beam" aria-hidden="true"></span>
         <span class="chest-loot" aria-hidden="true">📜</span>
-        <span class="chest-lid" aria-hidden="true">
-          <span class="lid-band"></span>
-          <span class="chest-lock"></span>
-        </span>
-        <span class="chest-base" aria-hidden="true">
-          <span class="base-band"></span>
-        </span>
+        <img class="chest-img chest-closed" src="images/chest-closed.png" alt="" aria-hidden="true" />
+        <img class="chest-img chest-open" src="images/chest-open.png" alt="" aria-hidden="true" />
+        <span class="chest-glow" aria-hidden="true"></span>
+        <span class="chest-flash" aria-hidden="true"></span>
         <span class="chest-shadow" aria-hidden="true"></span>
       </button>
       <p class="chest-hint">click to open — inside lies the sacred résumé</p>
@@ -340,6 +344,8 @@
     <p>Crafted with ❤ and ⚔ by Rupesh Sharma · © 2026</p>
     <p class="footer-hint">psst… try the Konami code: ↑ ↑ ↓ ↓ ← → ← → B A</p>
   </footer>
+
+  <div id="toast" class="toast" role="status"></div>
 
   <script src="script.js"></script>
 </body>
