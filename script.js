@@ -332,6 +332,119 @@ if (!reducedMotion && matchMedia('(hover: hover) and (pointer: fine)').matches) 
   document.addEventListener('mouseenter', () => { fairy.classList.remove('hidden'); dot.classList.remove('hidden'); });
 }
 
+/* ── Touch-only magic (phones & tablets) ──────── */
+const isTouch = matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+if (isTouch && !reducedMotion) {
+  /* 1. tap burst: sword slash + sparks where you tap */
+  window.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    if (!t) return;
+    const s = document.createElement('span');
+    s.className = 'slash';
+    s.style.left = t.clientX + 'px';
+    s.style.top = t.clientY + 'px';
+    s.style.setProperty('--ang', (Math.random() * 90 - 45) + 'deg');
+    sparkles.appendChild(s);
+    setTimeout(() => s.remove(), 420);
+
+    for (let i = 0; i < 5; i++) {
+      const sp = document.createElement('span');
+      sp.className = 'spark';
+      sp.style.left = t.clientX + (Math.random() * 44 - 22) + 'px';
+      sp.style.top = t.clientY + (Math.random() * 44 - 22) + 'px';
+      sparkles.appendChild(sp);
+      setTimeout(() => sp.remove(), 700);
+    }
+  }, { passive: true });
+
+  /* 2. a free-roaming fairy that wanders the screen
+        and darts to wherever you tap */
+  const fairy = document.createElement('div');
+  fairy.id = 'cursor-fairy';
+  fairy.className = 'roaming';
+  fairy.innerHTML = '<div class="fairy-core"></div>';
+  document.body.appendChild(fairy);
+
+  let fx = innerWidth / 2, fy = innerHeight / 3;
+  let wx = fx, wy = fy;
+  let dart = false, lastFairySpark = 0;
+
+  const newWaypoint = () => {
+    wx = 30 + Math.random() * (innerWidth - 60);
+    wy = 60 + Math.random() * (innerHeight - 140);
+    dart = false;
+  };
+  setInterval(() => { if (!dart) newWaypoint(); }, 3800);
+
+  window.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    if (!t) return;
+    wx = t.clientX;
+    wy = t.clientY - 40;             // hover just above the finger
+    dart = true;
+    fairy.classList.add('on-link');  // flash teal on a dart
+    setTimeout(() => fairy.classList.remove('on-link'), 700);
+  }, { passive: true });
+
+  (function roamLoop() {
+    const ease = dart ? 0.09 : 0.016;
+    fx += (wx - fx) * ease;
+    fy += (wy - fy) * ease;
+    const tilt = Math.max(-16, Math.min(16, (wx - fx) * 0.08));
+    fairy.style.transform = `translate(${fx}px, ${fy}px) rotate(${tilt}deg)`;
+
+    // she sheds sparkles as she flies
+    const now = performance.now();
+    if (now - lastFairySpark > 220) {
+      lastFairySpark = now;
+      const sp = document.createElement('span');
+      sp.className = 'spark';
+      sp.style.left = fx + (Math.random() * 10 - 5) + 'px';
+      sp.style.top = fy + 8 + (Math.random() * 8) + 'px';
+      sparkles.appendChild(sp);
+      setTimeout(() => sp.remove(), 700);
+    }
+    requestAnimationFrame(roamLoop);
+  })();
+
+  /* 3. parallax from the gyroscope (with a CSS self-drift
+        fallback until/unless motion access is granted) */
+  const mountains = document.querySelector('.mountains');
+  mountains.classList.add('self-drift');
+
+  const startGyro = () => {
+    let gx = 0, gy = 0, gTick = false;
+    window.addEventListener('deviceorientation', e => {
+      if (e.gamma === null) return;
+      mountains.classList.remove('self-drift');
+      gx = Math.max(-1, Math.min(1, e.gamma / 28));           // left-right tilt
+      gy = Math.max(-1, Math.min(1, ((e.beta || 45) - 45) / 30)); // fore-aft tilt
+      if (gTick) return;
+      gTick = true;
+      requestAnimationFrame(() => {
+        document.querySelector('.mtn-far').style.transform = `translate(${gx * -8}px, ${gy * -3}px)`;
+        document.querySelector('.mtn-mid').style.transform = `translate(${gx * -16}px, ${gy * -6}px)`;
+        document.querySelector('.mtn-near').style.transform = `translate(${gx * -28}px, ${gy * -10}px)`;
+        gTick = false;
+      });
+    });
+  };
+
+  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    // iOS: must ask from a user gesture — piggyback on the first tap
+    const askGyro = () => {
+      DeviceOrientationEvent.requestPermission()
+        .then(state => { if (state === 'granted') startGyro(); })
+        .catch(() => { /* declined — keep the CSS drift */ });
+      window.removeEventListener('touchend', askGyro);
+    };
+    window.addEventListener('touchend', askGyro, { once: true });
+  } else {
+    startGyro();
+  }
+}
+
 /* ── Ambient leaves & gold motes (whole page) ─── */
 const ambCanvas = document.getElementById('ambient');
 if (ambCanvas && !reducedMotion) {

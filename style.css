@@ -1870,6 +1870,119 @@ html.fairy-cursor * {
     animation: spinY .8s ease, floaty 4s ease-in-out infinite;
 }
 
+/* ═══════════════ TOUCH-ONLY MAGIC ═══════════════ */
+/* replaces the mouse-only effects on phones & tablets */
+
+@media (hover: none) and (pointer: coarse) {
+
+    /* quest & guild cards idly sway (stands in for 3D mouse tilt).
+       Uses the independent rotate/translate props so the
+       scroll-reveal transform is not disturbed. */
+    .quest-card,
+    .guild-card {
+        animation: cardSway 6s ease-in-out infinite;
+    }
+
+    .quest-card:nth-child(2),
+    .guild-card:nth-child(2n) {
+        animation-delay: 1.6s;
+    }
+
+    .guild-card:nth-child(3n) {
+        animation-delay: 3.1s;
+    }
+
+    /* hero buttons breathe (stands in for magnetic pull) */
+    .btn-gold {
+        animation: btnBreath 2.6s ease-in-out infinite;
+    }
+
+    .btn-ghost {
+        animation: ghostBreath 3.2s ease-in-out infinite;
+    }
+
+    /* mountains get a slow self-drift; gyroscope (if allowed)
+       overrides these transforms from JS */
+    .mountains.self-drift .mtn-far {
+        animation: mtnDrift 14s ease-in-out infinite alternate;
+    }
+
+    .mountains.self-drift .mtn-mid {
+        animation: mtnDrift 11s ease-in-out infinite alternate-reverse;
+    }
+
+    .mountains.self-drift .mtn-near {
+        animation: mtnDriftBig 9s ease-in-out infinite alternate;
+    }
+
+    /* contact cards get a tiny idle bob */
+    .contact-card {
+        animation: cardSway 7s ease-in-out infinite;
+    }
+
+    .contact-card:nth-child(2n) {
+        animation-delay: 2.2s;
+    }
+}
+
+@keyframes cardSway {
+
+    0%,
+    100% {
+        rotate: -0.7deg;
+        translate: 0 0;
+    }
+
+    50% {
+        rotate: 0.7deg;
+        translate: 0 -5px;
+    }
+}
+
+@keyframes btnBreath {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 0 #6d5417, 0 0 18px rgba(232, 197, 71, .3);
+        translate: 0 0;
+    }
+
+    50% {
+        box-shadow: 0 4px 0 #6d5417, 0 0 38px rgba(232, 197, 71, .65);
+        translate: 0 -3px;
+    }
+}
+
+@keyframes ghostBreath {
+
+    0%,
+    100% {
+        border-color: var(--edge);
+    }
+
+    50% {
+        border-color: var(--gold);
+        box-shadow: 0 0 18px rgba(232, 197, 71, .3);
+    }
+}
+
+@keyframes mtnDrift {
+    to {
+        translate: 14px -4px;
+    }
+}
+
+@keyframes mtnDriftBig {
+    to {
+        translate: -22px -8px;
+    }
+}
+
+/* roaming fairy on touch devices reuses the fairy-core look */
+#cursor-fairy.roaming {
+    transition: opacity .3s;
+}
+
 /* ═══════════════ RESPONSIVE ═══════════════ */
 
 @media (max-width: 900px) {
