@@ -296,44 +296,120 @@ function showToast(msg, dur = 3800) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), dur);
 }
 
-/* ── Hidden collectible rupees + wallet ───────── */
-const walletEl = document.getElementById('rupee-count');
-const RUPEE_COLORS = { 1: '#46e08a', 5: '#56b4ff', 20: '#ff6b5e' };
-const rupeeSpots = [['about', 1], ['skills', 5], ['quests', 20], ['journey', 5], ['contact', 1]];
-let wallet = 0;
-let remaining = rupeeSpots.length;
+/* ── Fairy companion cursor ───────────────────── */
+if (!reducedMotion && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  document.documentElement.classList.add('fairy-cursor');
 
-rupeeSpots.forEach(([id, val]) => {
-  const sec = document.getElementById(id);
-  if (!sec) return;
-  const b = document.createElement('button');
-  b.className = 'collect-rupee';
-  b.setAttribute('aria-label', 'Collect a hidden rupee');
-  b.style.left = 6 + Math.random() * 86 + '%';
-  b.style.top = 10 + Math.random() * 62 + '%';
-  b.style.background = RUPEE_COLORS[val];
-  b.style.filter = `drop-shadow(0 0 9px ${RUPEE_COLORS[val]})`;
-  sec.appendChild(b);
+  const dot = document.createElement('div');
+  dot.id = 'cursor-dot';
+  const fairy = document.createElement('div');
+  fairy.id = 'cursor-fairy';
+  fairy.innerHTML = '<div class="fairy-core"></div>';
+  document.body.append(dot, fairy);
 
-  b.addEventListener('click', () => {
-    if (b.classList.contains('pop')) return;
-    b.classList.add('pop');
-    blipCollect();
-    wallet += val;
-    walletEl.textContent = wallet;
-    walletEl.classList.remove('bump');
-    void walletEl.offsetWidth;
-    walletEl.classList.add('bump');
-    setTimeout(() => b.remove(), 500);
-    if (--remaining === 0) {
-      setTimeout(() => {
-        showToast('💎 WALLET FULL — A TRUE HERO! 💎');
-        chimeFanfare();
-        rupeeRain();
-      }, 400);
-    }
+  let tx = innerWidth / 2, ty = innerHeight / 2;   // real pointer
+  let fx = tx, fy = ty;                            // fairy position (lags behind)
+
+  window.addEventListener('mousemove', e => {
+    tx = e.clientX;
+    ty = e.clientY;
+    dot.style.transform = `translate(${tx}px, ${ty}px) rotate(45deg)`;
+    const hot = e.target.closest && e.target.closest('a, button, .slot, .heart, .triforce-float');
+    fairy.classList.toggle('on-link', !!hot);
   });
-});
+
+  (function flyLoop() {
+    fx += (tx - fx) * 0.16;
+    fy += (ty - fy) * 0.16;
+    const tilt = Math.max(-18, Math.min(18, (tx - fx) * 0.35));
+    fairy.style.transform = `translate(${fx}px, ${fy}px) rotate(${tilt}deg)`;
+    requestAnimationFrame(flyLoop);
+  })();
+
+  window.addEventListener('mousedown', () => fairy.classList.add('press'));
+  window.addEventListener('mouseup', () => fairy.classList.remove('press'));
+  document.addEventListener('mouseleave', () => { fairy.classList.add('hidden'); dot.classList.add('hidden'); });
+  document.addEventListener('mouseenter', () => { fairy.classList.remove('hidden'); dot.classList.remove('hidden'); });
+}
+
+/* ── Ambient leaves & gold motes (whole page) ─── */
+const ambCanvas = document.getElementById('ambient');
+if (ambCanvas && !reducedMotion) {
+  const actx = ambCanvas.getContext('2d');
+  const LEAF_COLORS = ['#5fce7f', '#8fd45f', '#e8c547', '#c9a23a', '#6fbf5a'];
+  let leaves = [], motes = [];
+
+  const newLeaf = (anywhere) => ({
+    x: Math.random() * innerWidth,
+    y: anywhere ? Math.random() * innerHeight : -24,
+    size: 5 + Math.random() * 7,
+    vy: 0.35 + Math.random() * 0.65,
+    sway: 0.3 + Math.random() * 0.6,
+    ph: Math.random() * Math.PI * 2,
+    rot: Math.random() * Math.PI * 2,
+    vr: (Math.random() - 0.5) * 0.04,
+    color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
+    alpha: 0.3 + Math.random() * 0.35
+  });
+
+  function sizeAmbient() {
+    ambCanvas.width = innerWidth;
+    ambCanvas.height = innerHeight;
+    leaves = Array.from({ length: Math.min(16, Math.floor(innerWidth / 90)) }, () => newLeaf(true));
+    motes = Array.from({ length: 12 }, () => ({
+      x: Math.random() * innerWidth,
+      y: Math.random() * innerHeight,
+      r: 0.8 + Math.random() * 1.5,
+      vy: 0.12 + Math.random() * 0.28,
+      ph: Math.random() * Math.PI * 2,
+      sp: 0.012 + Math.random() * 0.02
+    }));
+  }
+
+  function drawAmbient() {
+    actx.clearRect(0, 0, ambCanvas.width, ambCanvas.height);
+
+    for (let i = 0; i < leaves.length; i++) {
+      const l = leaves[i];
+      l.ph += 0.012;
+      l.x += Math.sin(l.ph) * l.sway;
+      l.y += l.vy;
+      l.rot += l.vr;
+      if (l.y > innerHeight + 24) leaves[i] = newLeaf(false);
+
+      actx.save();
+      actx.translate(l.x, l.y);
+      actx.rotate(l.rot);
+      actx.globalAlpha = l.alpha;
+      actx.fillStyle = l.color;
+      actx.beginPath();
+      actx.ellipse(0, 0, l.size, l.size * 0.42, 0, 0, Math.PI * 2);
+      actx.fill();
+      actx.restore();
+    }
+
+    actx.globalAlpha = 1;
+    for (const m of motes) {
+      m.y -= m.vy;
+      m.ph += m.sp;
+      if (m.y < -8) { m.y = innerHeight + 8; m.x = Math.random() * innerWidth; }
+      const tw = 0.25 + 0.55 * Math.abs(Math.sin(m.ph));
+      const g = actx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 5);
+      g.addColorStop(0, `rgba(255, 224, 132, ${tw})`);
+      g.addColorStop(1, 'transparent');
+      actx.fillStyle = g;
+      actx.beginPath();
+      actx.arc(m.x, m.y, m.r * 5, 0, Math.PI * 2);
+      actx.fill();
+    }
+
+    requestAnimationFrame(drawAmbient);
+  }
+
+  sizeAmbient();
+  drawAmbient();
+  window.addEventListener('resize', sizeAmbient);
+}
 
 /* ── Sword slash on click ─────────────────────── */
 window.addEventListener('pointerdown', e => {
